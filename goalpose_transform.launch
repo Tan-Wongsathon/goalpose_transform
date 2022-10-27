@@ -1,4 +1,0 @@
-<launch>
-  <node name="goalpose_transform_node" pkg="goalpose_transform" type="goalpose_transform_node" output="screen"/>
-
-</launch>
