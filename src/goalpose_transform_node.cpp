@@ -49,15 +49,17 @@ int main(int argc, char** argv){
 
     geometry_msgs::PoseStamped pose_msg;
     pose_msg.header = userpose_msg.header;
-    pose_msg.pose.position.x = transformStamped.transform.translation.x - userpose_msg.pose.position.x;
-    pose_msg.pose.position.y = transformStamped.transform.translation.y - userpose_msg.pose.position.y;
+    pose_msg.pose.position.x = userpose_msg.pose.position.x - transformStamped.transform.translation.x;
+    pose_msg.pose.position.y = userpose_msg.pose.position.y - transformStamped.transform.translation.y;
     //pose_msg.pose.position.z = transformStamped.transform.translation.z - userpose_msg.pose.position.z;
     pose_msg.pose.position.z = 0;
     pose_msg.pose.orientation.x = 0;
     pose_msg.pose.orientation.y = 0;
-    pose_msg.pose.orientation.z = atan((sqrt(pow((userpose_msg.pose.position.x - transformStamped.transform.translation.x),2.0)))
-                                  /(sqrt(pow((userpose_msg.pose.position.y - transformStamped.transform.translation.y),2.0))));
-    pose_msg.pose.orientation.w = 0;
+    //pose_msg.pose.orientation.z = atan((sqrt(pow((userpose_msg.pose.position.x - transformStamped.transform.translation.x),2.0)))
+                                  //(sqrt(pow((userpose_msg.pose.position.y - transformStamped.transform.translation.y),2.0))));
+    pose_msg.pose.orientation.z = atan((transformStamped.transform.translation.y - userpose_msg.pose.position.y)
+                                  /(transformStamped.transform.translation.x - userpose_msg.pose.position.x));
+    pose_msg.pose.orientation.w = 1.0;
     goalpose.publish(pose_msg);
 
   //ROS_INFO("I heard: [%f]", userpose_msg.position.x);
