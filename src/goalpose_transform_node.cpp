@@ -8,7 +8,13 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <nav_msgs/Odometry.h>
 
+const double r = -10.1;
 geometry_msgs::PoseStamped userpose_msg;
+double Vx;
+double Vy;
+double Tx;
+double Ty;
+
 
 void goalpose_callback(const nav_msgs::Odometry::ConstPtr& goalpoint)
 { 
@@ -47,18 +53,25 @@ int main(int argc, char** argv){
       ros::Duration(1.0).sleep();
     }
 
+    Vx = userpose_msg.pose.position.x - transformStamped.transform.translation.x;
+    Vy = userpose_msg.pose.position.y - transformStamped.transform.translation.y;
+    Tx = (Vx*cos(r))-(Vy*sin(r));
+    Ty = (Vx*sin(r))+(Vy*cos(r));
+
     geometry_msgs::PoseStamped pose_msg;
     pose_msg.header = userpose_msg.header;
-    pose_msg.pose.position.x = userpose_msg.pose.position.x - transformStamped.transform.translation.x;
-    pose_msg.pose.position.y = userpose_msg.pose.position.y - transformStamped.transform.translation.y;
-    //pose_msg.pose.position.z = transformStamped.transform.translation.z - userpose_msg.pose.position.z;
+    //pose_msg.pose.position.x = userpose_msg.pose.position.x - transformStamped.transform.translation.x;
+    //pose_msg.pose.position.y = userpose_msg.pose.position.y - transformStamped.transform.translation.y;
+    pose_msg.pose.position.x = Tx;
+    pose_msg.pose.position.y = Ty;
     pose_msg.pose.position.z = 0;
     pose_msg.pose.orientation.x = 0;
     pose_msg.pose.orientation.y = 0;
     //pose_msg.pose.orientation.z = atan((sqrt(pow((userpose_msg.pose.position.x - transformStamped.transform.translation.x),2.0)))
                                   //(sqrt(pow((userpose_msg.pose.position.y - transformStamped.transform.translation.y),2.0))));
-    pose_msg.pose.orientation.z = atan((transformStamped.transform.translation.y - userpose_msg.pose.position.y)
-                                  /(transformStamped.transform.translation.x - userpose_msg.pose.position.x));
+    //pose_msg.pose.orientation.z = atan((transformStamped.transform.translation.y - userpose_msg.pose.position.y)
+                                  //(transformStamped.transform.translation.x - userpose_msg.pose.position.x));
+    pose_msg.pose.orientation.z = -atan((Tx)/(Ty));
     pose_msg.pose.orientation.w = 1.0;
     goalpose.publish(pose_msg);
 
